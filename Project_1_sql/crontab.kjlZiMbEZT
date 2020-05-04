@@ -1,0 +1,2 @@
+# retrive the data at the first day of every month on 10am
+0 10 1 * * /Users/jasmine/Downloads/project_1_sql.sql
