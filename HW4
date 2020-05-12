@@ -1,0 +1,26 @@
+import numpy as np
+import pandas as pd
+from pandas import Series, DataFrame
+import matplotlib.pyplot as plt
+data = pd.read_csv('meetings.csv', delimiter = ',')
+
+week = df['meeting_num'].groupby([df['Days']],as_index= False).sum()
+week 
+week.plot(x='Days', y='meeting_num', kind='bar') 
+plt.show()
+
+weekday = week[0:5]
+weekday.plot(x='Days', y='meeting_num', kind='bar') 
+plt.show()
+
+weekend = week[5:]
+weekend.plot(x='Days', y='meeting_num', kind='bar') 
+plt.show()
+
+## Days       time         Meeting_num
+   Mon.       00:00:00          0
+              00:00:30          1
+              ....
+   Tues       00:00:00          0
+              00:00:30          1
+              ....
