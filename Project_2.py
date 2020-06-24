@@ -254,8 +254,27 @@ conn = redis.Redis(host='192.168.26.128', port='6379')
 conn.mset(customer_number = '546', lastName = 'Labrune',firstName = 'Janine',phone = '40.67.8555')
 data_r = conn.mget('customer_number','lastName','firstName','phone')
 
+#10 cloudwatch
+s3 = boto3.resource('s3') 
+s3_client = boto3.client('s3') 
 
-#10 cronjob
+command = "aws cloudwatch get-metric-statistics --metric-name BucketSizeBytes --namespace AWS/S3 --start-time {} --end-time {} --statistics Average --unit  Bytes --region {} --dimensions Name=BucketName,Value={} Name=StorageType,Value=StandardStorage --period 86400 --output json" 
+
+for bucket in s3.buckets.all(): 
+    region = s3_client.get_bucket_location(Bucket=bucket.name) 
+    region_name = region['LocationConstraint'] 
+
+    start_date = datetime.now() - timedelta(days=7) 
+    start_date_str = str(start_date.date()) + 'T00:00:00Z' 
+    end_date = datetime.now() 
+    end_date_str = str(end_date.date()) + 'T00:00:00Z' 
+    cmd = command.format(start_date_str, end_date_str, region_name, bucket.name) 
+    res = subprocess.check_output(cmd, stderr=subprocess.STDOUT) 
+    bucket_stats = json.loads(res.decode('ascii')) 
+    if len(bucket_stats['Datapoints']) > 0: 
+     print(bucket_stats['Datapoints']) 
+
+#11 cronjob
 
 # retrive the data at the first day of every month on 10am
 0 10 1 * * /Users/jasmine/Downloads/Project_2.py
